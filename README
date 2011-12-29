@@ -1,11 +1,16 @@
 
-mod_aclr2 is the port of original mod_aclr (for Apache 1.3.x) written by
-Dmitry MikSir.
+mod_aclr2 is the port of original mod_aclr (for Apache 1.3.x)
+written by Dmitry MikSir.
+
+Original mod_aclr was initially released under GNU GPL license,
+but its author granted the permission to release new mod_aclr2
+under BSD license.
 
 You can get more information about the original module here:
 http://miksir.maker.ru/?r=72
 
-mod_aclr2 works under Apache 2.x.
+
+mod_aclr2 works under Apache 2.x only.
 
 Documentation and examples are coming soon!
 
