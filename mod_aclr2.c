@@ -30,7 +30,8 @@
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <sys/stat.h>
+#include <unistd.h>
+
 #include "httpd.h"
 #include "http_config.h"
 #include "http_core.h"
@@ -105,7 +106,6 @@ aclr_handler(request_rec *r)
     ap_filter_t *f, *nextf;
     char iredirect[MAX_STRING_LEN];
 
-    const char *server_name = ap_get_server_name(r);
     aclr_dir_config *cfg = (aclr_dir_config *)ap_get_module_config
                            (r->per_dir_config, &aclr_module);
 
@@ -122,6 +122,10 @@ aclr_handler(request_rec *r)
     if (idhead == NULL) {
         return DECLINED;
     }
+
+#ifdef DEBUG
+    const char *server_name = ap_get_server_name(r);
+#endif
 
     docroot = ap_document_root(r);
     docroot_len = strlen(docroot);
@@ -142,15 +146,6 @@ aclr_handler(request_rec *r)
         real_uri = r->filename;
         real_uri += docroot_len;
     }
-
-/*  if ((idh1 = strstr(idhead, "%host%"))) {
-        *idh1 = '\0';
-        idh1 += 6;
-        snprintf(iredirect, sizeof(iredirect), "%s%s%s%s",
-                 idhead, server_name, idh1, real_uri);
-    } else {
-        snprintf(iredirect, sizeof(iredirect), "%s%s", idhead, real_uri);
-    } */
 
     snprintf(iredirect, sizeof(iredirect), "%s%s", idhead, real_uri);
 
