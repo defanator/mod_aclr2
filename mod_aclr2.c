@@ -3,8 +3,8 @@
  *   Copyright (c) Dmitry MikSir (http://miksir.maker.ru)
  *
  * Porting to Apache 2.x
- *   Copyright (c) 2011 Andrey Belov
- *   Copyright (c) 2011 Nginx, Inc. (http://nginx.org)
+ *   Copyright (c) 2011-2012 Andrey Belov
+ *   Copyright (c) 2011-2012 Nginx, Inc. (http://nginx.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
