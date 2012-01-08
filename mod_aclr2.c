@@ -62,31 +62,39 @@ const char *xa_int_name = "X-Accel-Internal";
 const char *xa_ver_name = "X-Accel-Version";
 const char *xa_redir_name = "X-Accel-Redirect";
 
-static int debuglevel = 0;
 
-
-/* utilites */
+/* utilities */
 
 #ifdef DEBUG
-static void aclr_debug(int level, server_rec *s, const char *fmt, ...)
+static int debuglevel = 0;
+
+#define aclr_debug(level, s, fmt, args...)      \
+    if (level <= debuglevel)                    \
+        _aclr_debug(s, fmt, args)
+
+static void
+_aclr_debug(server_rec *s, const char *fmt, ...)
 {
     char errstr[MAX_STRING_LEN];
     va_list args;
 
-    if (level > debuglevel) return;
     va_start(args, fmt);
     apr_vsnprintf(errstr, sizeof(errstr), fmt, args);
     va_end(args);
-    ap_log_error(APLOG_MARK, APLOG_INFO, 0, s, "[%ld] %s",
-                 (long)getpid(), errstr);
+    ap_log_error(APLOG_MARK, APLOG_DEBUG, 0, s, "[%" APR_PID_T_FMT "] %s",
+                 getpid(), errstr);
     return;
 }
+
+#else
+#define aclr_debug(level, s, fmt, ...)
 #endif
 
 
 /* runtime */
 
-static int aclr_handler(request_rec *r)
+static int
+aclr_handler(request_rec *r)
 {
     int	rc;
     const char *idhead;
@@ -122,11 +130,9 @@ static int aclr_handler(request_rec *r)
     if (strncmp(r->filename, docroot, docroot_len) != 0) {
         if (cfg->redirect_outside_of_docroot != ACLR_ENABLED) {
 
-#ifdef DEBUG
-            aclr_debug(2, r->server,
-                       "file \"%s\" is outside of DocumentRoot: %s%s",
-                       r->filename, server_name, r->uri);
-#endif
+            aclr_debug(2, r->server, "file \"%s\" is outside of "
+                       "DocumentRoot \"%s\": %s%s",
+                       r->filename, docroot, server_name, r->uri);
 
             return DECLINED;
         }
@@ -136,13 +142,6 @@ static int aclr_handler(request_rec *r)
         real_uri = r->filename;
         real_uri += docroot_len;
     }
-
-#ifdef VERY_VERBOSE_DEBUG
-    aclr_debug(2, r->server, "r->filename: '%s'", r->filename);
-    aclr_debug(2, r->server, "r->uri     : '%s'", r->uri);
-    aclr_debug(2, r->server, "docroot    : '%s'", docroot);
-    aclr_debug(2, r->server, "real_uri   : '%s'", real_uri);
-#endif
 
 /*  if ((idh1 = strstr(idhead, "%host%"))) {
         *idh1 = '\0';
@@ -155,10 +154,13 @@ static int aclr_handler(request_rec *r)
 
     snprintf(iredirect, sizeof(iredirect), "%s%s", idhead, real_uri);
 
-#ifdef DEBUG
-    aclr_debug(4, r->server, "request from frontend: %s%s -> %s",
+    aclr_debug(3, r->server, "trying to process request: %s%s -> %s",
                server_name, r->uri, iredirect);
-#endif
+
+    aclr_debug(3, r->server, "r->filename: \"%s\"", r->filename);
+    aclr_debug(3, r->server, "r->uri     : \"%s\"", r->uri);
+    aclr_debug(3, r->server, "docroot    : \"%s\"", docroot);
+    aclr_debug(3, r->server, "real_uri   : \"%s\"", real_uri);
 
     if ((rc = ap_discard_request_body(r)) != OK) {
         return rc;
@@ -167,26 +169,24 @@ static int aclr_handler(request_rec *r)
     apr_table_set(r->headers_out, xa_ver_name, ACLR_VERSION);
 
     if ((r->method_number != M_GET) || (r->header_only)) {
-#ifdef DEBUG
-        aclr_debug(3, r->server, "request method is not GET: %s%s",
+        aclr_debug(2, r->server, "request method is not GET: %s%s",
                    server_name, r->uri);
-#endif
+
         return DECLINED;
     }
 
     if (r->finfo.filetype != APR_REG) {
-#ifdef DEBUG
-        aclr_debug(3, r->server, "request points to not regular file: %s%s",
+        aclr_debug(2, r->server, "request file not found "
+                   "or is not regular file: %s%s",
                    server_name, r->uri);
-#endif
+
         return DECLINED;
     }
 
     if (cfg->fsize != UNSET && r->finfo.size < cfg->fsize) {
-#ifdef DEBUG
 	aclr_debug(2, r->server, "file size %lu < minsize %lu: %s%s",
                    r->finfo.size, cfg->fsize, server_name, r->uri);
-#endif
+
 	return DECLINED;
     }
 
@@ -194,10 +194,9 @@ static int aclr_handler(request_rec *r)
     do {
         nextf = f->next;
         if (strcmp(f->frec->name, "includes") == 0) {
-#ifdef DEBUG
-            aclr_debug(2, r->server, "request uses includes filter: %s%s",
+            aclr_debug(2, r->server, "request uses INCLUDES filter: %s%s",
                        server_name, r->uri);
-#endif
+
 	    return DECLINED;
 	}
 	f = nextf;
@@ -211,10 +210,8 @@ static int aclr_handler(request_rec *r)
     r->header_only = 0;
     ap_update_mtime(r, r->finfo.mtime);
 
-#ifdef DEBUG
     aclr_debug(1, r->server, "request %s%s redirected to %s",
                server_name, r->uri, iredirect);
-#endif
 
     return OK;
 }
@@ -281,6 +278,7 @@ set_redirect_min_size(cmd_parms *cmd, void *config, const char *size_str)
     return NULL;
 }
 
+#ifdef DEBUG
 static const char *
 set_debug_level(cmd_parms *cmd, void *config, const char *arg)
 {
@@ -289,6 +287,7 @@ set_debug_level(cmd_parms *cmd, void *config, const char *arg)
     debuglevel = strtol(arg, NULL, 10);
     return NULL;
 }
+#endif
 
 
 /* module info */
@@ -310,7 +309,7 @@ static const command_rec aclr_cmds[] =
 #ifdef DEBUG
     AP_INIT_TAKE1("AccelRedirectDebug", set_debug_level,
         NULL, RSRC_CONF,
-	"Debug level (0=off)"),
+	"Debug level (0=off, 1=min, 2=mid, 3=max)"),
 #endif
 
     { NULL }
@@ -331,3 +330,4 @@ module AP_MODULE_DECLARE_DATA aclr_module =
     aclr_cmds,                  /* command handlers                       */
     register_hooks              /* register hooks                         */
 };
+
