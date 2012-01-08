@@ -98,12 +98,11 @@ aclr_handler(request_rec *r)
 {
     int	rc;
     const char *idhead;
-    char *idh1, *real_uri, *p, *sp;
+    char *real_uri;
     const char *docroot;
     size_t docroot_len;
-    struct stat sb;
     ap_filter_t *f, *nextf;
-    char iredirect[MAX_STRING_LEN], fb[FILENAME_MAX];
+    char iredirect[MAX_STRING_LEN];
 
     const char *server_name = ap_get_server_name(r);
     aclr_dir_config *cfg = (aclr_dir_config *)ap_get_module_config
