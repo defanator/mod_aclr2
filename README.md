@@ -5,9 +5,10 @@
 ## License and copyrights
 
 `mod_aclr2` is the port of the original `mod_aclr` module for Apache 1.3
-written by [Dmitry MikSir](http://miksir.maker.ru).
+written by [Dmitry MikSir](http://miksir.maker.ru).<br>
 Original code and documentation are still available
-[here](http://miksir.maker.ru/?r=72).
+[here](http://miksir.maker.ru/?r=72).<br>
+Copyright (C) Dmitry MikSir
 
 This module, in contrast to `mod_aclr`, works only under Apache 2.x.
 
@@ -71,29 +72,30 @@ on the same machine as Apache and having the same access to the files on disk.
  context: server config, virtual host, directory<br>
  default: Off<br>
 
- Enables or disables the module.
+&nbsp;&nbsp;&nbsp; Enables or disables the module.
 
  syntax: **AccelRedirectSize** size[b|k|m]<br>
  context: server config, virtual host, directory<br>
  default: -1<br>
  
- Sets the minimum size of static files for which the
- request will be handled by NGINX. By default, there is no
- any restrictions, e.g. Apache will send redirects to NGINX
- for all static files.
+&nbsp;&nbsp;&nbsp; Sets the minimum size of static files for which the
+ request will be handled by NGINX.<br>
+&nbsp;&nbsp;&nbsp; By default, there is no any restrictions, e.g.
+Apache will send redirects to NGINX for all static files.
 
  syntax: **AccelRedirectOutsideDocRoot** On | Off<br>
  context: server config, virtual host, directory<br>
  default: Off<br>
 
- Enables or disables redirects for files outside of DocumentRoot path.
+&nbsp;&nbsp;&nbsp; Enables or disables redirects for files
+outside of DocumentRoot path.
 
  syntax: **AccelRedirectDebug** 0-4<br>
  context: server config<br>
  default: 0<br>
 
-<b>WARNING: module must be built with -DDEBUG to enable this directive.</b><br>
- Sets the debug level:<br>
+&nbsp;&nbsp;&nbsp; <b>WARNING: module must be built with -DDEBUG to enable this directive.</b><br>
+&nbsp;&nbsp;&nbsp; Sets the debug level:<br>
 
  *	0 = no debug
  *	1 = log successfull redirects only
