@@ -1,14 +1,14 @@
 
-# Module for easy deploying NGINX as a frontend to Apache
+# Module for Apache 2.x which automates serving static content with an NGINX local proxy
 
 ## License and copyrights
 
-`mod_aclr2` is the port of original Apache 1.3 module `mod_aclr`
+`mod_aclr2` is the port of the original `mod_aclr` module for Apache 1.3
 written by [Dmitry MikSir](http://miksir.maker.ru).
-Original code and documentation still available
+Original code and documentation are still available
 [here](http://miksir.maker.ru/?r=72).
 
-This module, in contrast from `mod_aclr`, works only under Apache 2.x.
+This module, in contrast to `mod_aclr`, works only under Apache 2.x.
 
 Original `mod_aclr` was initially released under GNU GPL license,
 but its author granted the permission to release new `mod_aclr2`
@@ -19,16 +19,18 @@ Copyright (C) 2011-2012 Nginx, Inc., [http://nginx.com](http://nginx.com)
 
 ## Introduction
 
-`mod_aclr2` ("aclr" comes from <i>**ac**ce**l r**edirect</i>) is the module
-for Apache 2.x, that makes possible to easily deploy [NGINX](http://nginx.com)
-as a reverse proxy in front of [Apache](http://httpd.apache.org).
+`mod_aclr2` ("aclr" comes from <i>**ac**ce**l r**edirect</i>) is the module for
+Apache 2.x, that makes it possible to easily deploy [NGINX](http://nginx.com)
+as a local reverse proxy in front of [Apache](http://httpd.apache.org).
 
-As a result, all your static content may be served by NGINX,
-while other Apache-specific things like RewriteRules, .htaccesses,
-embedded PHP/Perl, CGIs will work as they worked before.
-This behavior is very important for many shared hosting providers.
+As a result, all your static content can now be automatically served
+by NGINX, while the other legacy and Apache-specific things like
+RewriteRules, .htaccesses, embedded PHP/Perl, CGIs will work as they worked
+before. This setup can be very important and useful for many shared hosting
+service providers to improve the situation with the concurrency and quality
+of service.
 
-Efficiency in processing any kind of static content is only one of
+Efficiency in processing any kind of static content is just one of the
 [NGINX benefits](http://nginx.com/papers/nginx-features.pdf),
 therefore mod_aclr2 is a good starting point for further improvements
 to your existing hosting infrastructure - you could do many things
@@ -37,27 +39,29 @@ better and faster with NGINX.
 ## How it works?
 
 The module creates a special Apache handler hook. This handler
-must be processed after all another registered handlers,
+must be processed after all the other registered handlers,
 and before generating any response to the client
 (NGINX, in our case).
 
 First, it checks for the `X-Accel-Internal` header presence.
-If it is, and if result of the request is a regular file,
-module sends a special header
+If this header is present, and if the result of the request is a regular file,
+the module sends a special header
 [`X-Accel-Redirect`](http://wiki.nginx.org/X-accel#X-Accel-Redirect)
 back to NGINX. This header contains the value of `X-Accel-Internal`
-header combined with exact location of the file
+header combined with the exact location of the file
 as it was determined by Apache after processing all previous
 hooks (mod_rewrite, .htaccess, etc).
 
-All requests with dynamic responces (except SSI) should never
-reach `mod_aclr2` handler. Every SSI request is redirected to core
+All requests with dynamic responses (except SSI) should never
+reach `mod_aclr2` handler. Every SSI request is redirected to the core
 directly from `mod_aclr2` handler if INCLUDES filter was
 found in the output filters chain.
 
 The fact that the presence of the `X-Accel-Internal` is required
-allows you to control precisely when to get NGINX to serve the static
-file or go directly to the backend.
+allows you to control precisely when to make NGINX serve the static
+file or go directly to the backend. Please note that in order for NGINX
+to serve the static content directly, it should run as a local proxy,
+on the same machine as Apache and having the same access to the files on disk.
 
 ## Configuration directives
 
@@ -80,8 +84,7 @@ file or go directly to the backend.
  context: server config, virtual host, directory<br>
  default: Off<br>
 
- Enables or disables redirects for files which names
- does not starts from DocumentRoot path.
+ Enables or disables redirects for files outside of DocumentRoot path.
 
  syntax: **AccelRedirectDebug** 0-4<br>
  context: server config<br>
