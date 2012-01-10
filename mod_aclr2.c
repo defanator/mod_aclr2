@@ -152,10 +152,10 @@ aclr_handler(request_rec *r)
     aclr_debug(3, r->server, "trying to process request: %s%s -> %s",
                server_name, r->uri, iredirect);
 
-    aclr_debug(3, r->server, "r->filename: \"%s\"", r->filename);
-    aclr_debug(3, r->server, "r->uri     : \"%s\"", r->uri);
-    aclr_debug(3, r->server, "docroot    : \"%s\"", docroot);
-    aclr_debug(3, r->server, "real_uri   : \"%s\"", real_uri);
+    aclr_debug(3, r->server, "r->filename: %s", r->filename);
+    aclr_debug(3, r->server, "r->uri: %s", r->uri);
+    aclr_debug(3, r->server, "docroot: %s", docroot);
+    aclr_debug(3, r->server, "real_uri: %s", real_uri);
 
     if ((rc = ap_discard_request_body(r)) != OK) {
         return rc;
@@ -188,6 +188,7 @@ aclr_handler(request_rec *r)
     f = r->output_filters;
     do {
         nextf = f->next;
+        aclr_debug(3, r->server, "output filter: %s", f->frec->name);
         if (strcmp(f->frec->name, "includes") == 0) {
             aclr_debug(2, r->server, "request uses INCLUDES filter: %s%s",
                        server_name, r->uri);
@@ -199,10 +200,8 @@ aclr_handler(request_rec *r)
 
     apr_table_set(r->headers_out, xa_redir_name, iredirect);
 
-    /* for CustomLog %b/%B correct logging */
-    r->bytes_sent = r->finfo.size;
+    r->header_only = 1;
 
-    r->header_only = 0;
     ap_update_mtime(r, r->finfo.mtime);
 
     aclr_debug(1, r->server, "request %s%s redirected to %s",
