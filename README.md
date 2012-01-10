@@ -1,5 +1,6 @@
 
 # Module for Apache 2.x which automates serving static content with an NGINX local proxy
+<br>
 
 ## License and copyrights
 
@@ -54,8 +55,9 @@ hooks (mod_rewrite, .htaccess, etc).
 
 All requests with dynamic responses (except SSI) should never
 reach `mod_aclr2` handler. Every SSI request is redirected to the core
-directly from `mod_aclr2` handler if INCLUDES filter was
-found in the output filters chain.
+directly from `mod_aclr2` handler if
+[INCLUDES](http://httpd.apache.org/docs/2.2/mod/mod_include.html) filter
+was found in the output filters chain.
 
 The fact that the presence of the `X-Accel-Internal` is required
 allows you to control precisely when to make NGINX serve the static
