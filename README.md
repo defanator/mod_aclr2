@@ -1,5 +1,5 @@
 
-# Module for Apache 2.x which automates serving static content with an NGINX local proxy
+# Module for Apache 2.x which automates serving static content with NGINX local proxy
 <br>
 
 ## License and copyrights
