@@ -108,6 +108,10 @@ outside of DocumentRoot path.
 
         apxs -c mod_aclr2.c
 
+    In order to use AccelRedirectDebug directive, you should use the following command:
+
+        apxs -c -DDEBUG -Wc,-Wall mod_aclr2.c
+
  2. Install and activate it.
 
         apxs -i -a -n mod_aclr2 mod_aclr2.la
