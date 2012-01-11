@@ -143,9 +143,8 @@ header `X-Accel-Internal` to be present.
  2. Special internal location:
   
         location /int/ {
-            # root must be equal to Apache's DocumentRoot
-            root /var/www/site.com;
-            rewrite ^/int/(.*)$ /$1 break;
+            # path must be equal to Apache's DocumentRoot
+            alias /var/www/site.com/;
             internal;
          }
 
