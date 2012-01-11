@@ -290,15 +290,15 @@ static const command_rec aclr_cmds[] =
 {
     AP_INIT_FLAG("AccelRedirectSet", set_aclr_state,
         NULL, ACCESS_CONF|RSRC_CONF,
-	"Turn X-ACLR-Redirect support On or Off (default Off)"),
+	"Turn X-Accel-Redirect support On or Off (default Off)"),
 
     AP_INIT_TAKE1("AccelRedirectSize", set_redirect_min_size,
         NULL, ACCESS_CONF|RSRC_CONF,
-	"Minimum size of file for redirect in bytes"),
+	"Minimum size of file for redirect"),
 
     AP_INIT_FLAG("AccelRedirectOutsideDocRoot", set_aclr_outside_of_docroot,
         NULL, RSRC_CONF,
-	"Allow redirect to outside of DocumentRoot (default Off)"),
+	"Allow redirect outside of DocumentRoot (default Off)"),
 
 #ifdef DEBUG
     AP_INIT_TAKE1("AccelRedirectDebug", set_debug_level,
