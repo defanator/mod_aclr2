@@ -137,9 +137,6 @@ The configuration relies on the fact that `mod_aclr2` **requires** the
             proxy_set_header Host $host;
         }
 
-     The location `/int` is the one that will handle the
-     static file serving by NGINX.
-
  2. Special internal location for handling redirects:
 
         location /int/ {
