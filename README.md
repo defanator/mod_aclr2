@@ -127,12 +127,18 @@ outside of DocumentRoot path.
 ## NGINX configuration
 
 The configuration relies on the fact that `mod_aclr2` **requires** the
-`X-Accel-Internal` header field to be present.
+`X-Accel-Internal` request header field to be present.
+
+It is very important to transfer a real client IP address to Apache
+for correct logging, permission checks, etc. You can use the special
+header field `X-Real-IP` as shown below along with the module
+[`mod_rpaf`](http://stderr.net/apache/rpaf) to make this work.
 
  1. Proxy configuration:
 
         location / {
             proxy_pass http://127.0.0.1:80;
+            proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Accel-Internal /int;
             proxy_set_header Host $host;
         }
