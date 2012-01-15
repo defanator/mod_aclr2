@@ -155,6 +155,7 @@ According to this configuration, request from NGINX to Apache should look like:
 
         GET /some/static/file.txt HTTP/1.1
         Host: site.com
+        X-Real-IP: 11.22.33.44
         X-Accel-Internal: /int
 
 and response from `mod_aclr2` to NGINX should look like:
