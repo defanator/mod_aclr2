@@ -200,7 +200,7 @@ aclr_handler(request_rec *r)
 
     apr_table_set(r->headers_out, xa_redir_name, iredirect);
 
-    r->header_only = 1;
+    r->header_only = 0;
 
     ap_update_mtime(r, r->finfo.mtime);
 
