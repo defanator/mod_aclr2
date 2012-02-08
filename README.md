@@ -165,6 +165,7 @@ and response from `mod_aclr2` to NGINX should look like:
         Server: Apache/2.2.21 (FreeBSD)
         X-Accel-Version: 0.01
         X-Accel-Redirect: /int/some/static/file.txt
+        Content-Length: 0
         Content-Type: text/plain
 
 and, finally, NGINX sends the file `/var/www/site.com/some/static/file.txt`
