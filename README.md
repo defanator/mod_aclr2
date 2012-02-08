@@ -114,7 +114,7 @@ outside of DocumentRoot path.
 
  2. Install and activate it.
 
-        apxs -i -a -n mod_aclr2 mod_aclr2.la
+        apxs -i -a -n aclr mod_aclr2.la
 
  3. Configure the module in the Apache configuration file `httpd.conf`
     or equivalent. For example:
